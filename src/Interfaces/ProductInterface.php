@@ -117,5 +117,6 @@ interface ProductInterface extends IdentifierInterface
      *
      * @return ProductInterface|null
      */
-    public static function findProductBy1c(string $id): ?self;
+//    public static function findProductBy1c(string $id): ?self;
+    public static function findProductBy1c(string $id);
 }

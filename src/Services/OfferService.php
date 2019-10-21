@@ -78,6 +78,7 @@ class OfferService
             $offerClass::createPriceTypes1c($commerce->offerPackage->getPriceTypes());
         }
         $this->beforeOfferSync();
+        $offers = $commerce->offerPackage->getOffers();
         foreach ($commerce->offerPackage->getOffers() as $offer) {
             $productId = $offer->getClearId();
             if ($product = $this->findProductModelById($productId)) {

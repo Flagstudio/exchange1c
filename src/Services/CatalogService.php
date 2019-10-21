@@ -89,7 +89,7 @@ class CatalogService extends AbstractService
     {
         $this->authService->auth();
         $filename = $this->request->get('filename');
-        switch ($filename) {
+        /*switch ($filename) {
             case 'import.xml':
                 {
                     $this->categoryService->import();
@@ -100,6 +100,12 @@ class CatalogService extends AbstractService
                     $this->offerService->import();
                     break;
                 }
+        }*/
+        if (mb_stripos($filename, 'import0') !== false) {
+            $this->categoryService->import();
+        }
+        if (mb_stripos($filename, 'offers') !== false) {
+            $this->offerService->import();
         }
 
         $response = "success\n";
