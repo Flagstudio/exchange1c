@@ -79,7 +79,7 @@ class AuthService
 //                throw new Exchange1CException(sprintf('Session is not insatiable interface %s or %s', SessionInterface::class, Session::class));
 //            }
         } else {
-            $response = "failure\n";
+            $response = "failure\nUser: {$user}\nPass: {$pass}";
         }
 
         return $response;
