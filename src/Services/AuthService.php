@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class AuthService
 {
-    public const SESSION_KEY = 'exchange1c_session';
+    public const SESSION_KEY = 'cml_import';
 
     /**
      * @var Request
@@ -56,30 +56,24 @@ class AuthService
      */
     public function checkAuth()
     {
-        $user = Request::getUser();
-        $pass = Request::getPassword();
-        $attempt = Auth::attempt(['email' => $user, 'password' => $pass]);
-        if ( $attempt
-//            $this->request->server->get('PHP_AUTH_USER') === $this->config->getLogin() &&
-//            $this->request->server->get('PHP_AUTH_PW') === $this->config->getPassword()
+        if (
+            $this->request->server->get('PHP_AUTH_USER') === $this->config->getLogin() &&
+            $this->request->server->get('PHP_AUTH_PW') === $this->config->getPassword()
         ) {
             $this->session->save();
-            $cookieName = self::SESSION_KEY;
-            $cookieID = Session::getId();
-            $response = "success\n$cookieName\n$cookieID";
-//            $response = "success\n";
-//            $response .= "laravel_session\n";
-//            $response .= $this->session->getId()."\n";
-//            $response .= 'timestamp='.time();
-//            if ($this->session instanceof SessionInterface) {
-//                $this->session->set(self::SESSION_KEY.'_auth', $this->config->getLogin());
-//            } elseif ($this->session instanceof Session) {
-//                $this->session->put(self::SESSION_KEY.'_auth', $this->config->getLogin());
-//            } else {
-//                throw new Exchange1CException(sprintf('Session is not insatiable interface %s or %s', SessionInterface::class, Session::class));
-//            }
+            $response = "success\n";
+            $response .= "laravel_session\n";
+            $response .= $this->session->getId()."\n";
+            $response .= 'timestamp='.time();
+            if ($this->session instanceof SessionInterface) {
+                $this->session->set(self::SESSION_KEY.'_auth', $this->config->getLogin());
+            } elseif ($this->session instanceof Session) {
+                $this->session->put(self::SESSION_KEY.'_auth', $this->config->getLogin());
+            } else {
+                throw new Exchange1CException(sprintf('Session is not insatiable interface %s or %s', SessionInterface::class, Session::class));
+            }
         } else {
-            $response = "failure\nUser: {$user}\nPass: {$pass}";
+            $response = "failure\n";
         }
 
         return $response;
@@ -90,13 +84,10 @@ class AuthService
      */
     public function auth(): void
     {
-//        $login = $this->config->getLogin();
-//        $user = $this->session->get(self::SESSION_KEY.'_auth', null);
-        $sessionID = Session::getId();
-        $cookieID = $this->session->get(self::SESSION_KEY, null);
+        $login = $this->config->getLogin();
+        $user = $this->session->get(self::SESSION_KEY.'_auth', null);
 
-//        if (!$user || $user != $login) {
-        if (!$cookieID || $cookieID != $sessionID) {
+        if (!$user || $user != $login) {
             throw new Exchange1CException('auth error');
         }
     }
