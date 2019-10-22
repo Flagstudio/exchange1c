@@ -89,11 +89,13 @@ class CatalogService extends AbstractService
     {
         $this->authService->auth();
         $filename = $this->request->get('filename');
-        if (mb_stripos($filename, 'import') !== false) {
-            $this->categoryService->import();
-        }
-        if (mb_stripos($filename, 'offers') !== false) {
-            $this->offerService->import();
+        if (mb_stripos($filename, 'import_files' === false)) {
+            if (mb_stripos($filename, 'import') !== false) {
+                $this->categoryService->import();
+            }
+            if (mb_stripos($filename, 'offers') !== false) {
+                $this->offerService->import();
+            }
         }
 
         $response = "success\n";
