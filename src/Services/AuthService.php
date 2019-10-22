@@ -90,8 +90,7 @@ class AuthService
 //        $user = $this->session->get(self::SESSION_KEY.'_auth', null);
         $checkLogin = $this->request->server->get('PHP_AUTH_USER') === $this->config->getLogin();
         $checkPassword = $this->request->server->get('PHP_AUTH_PW') === $this->config->getPassword();
-        $checkCookie = $this->request->exchange1c_session;
-        if (!($checkLogin && $checkPassword && $checkCookie)) {
+        if (!($checkLogin && $checkPassword)) {
             throw new Exchange1CException('auth error');
         }
     }
