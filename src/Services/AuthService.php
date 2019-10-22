@@ -66,7 +66,6 @@ class AuthService
             $response .= "exchange1c_session\n";
             $response .= $sessionId."\n";
             $response .= 'timestamp='.time();
-            $response .= "\ncheckauth successed";
             if ($this->session instanceof SessionInterface) {
                 $this->session->set(self::SESSION_KEY.'_auth', $sessionId);
             } elseif ($this->session instanceof Session) {
@@ -75,7 +74,7 @@ class AuthService
                 throw new Exchange1CException(sprintf('Session is not insatiable interface %s or %s', SessionInterface::class, Session::class));
             }
         } else {
-            $response = "failure\ncheckauth failed";
+            $response = "failure";
         }
 
         return $response;

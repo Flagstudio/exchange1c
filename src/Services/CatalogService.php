@@ -90,7 +90,7 @@ class CatalogService extends AbstractService
     {
         $this->authService->auth();
         $filename = $this->request->get('filename');
-        if (mb_stripos($filename, 'import_files' === false)) {
+        if (mb_stripos($filename, 'import_files') === false) {
             if (mb_stripos($filename, 'import') !== false) {
                 $this->categoryService->import();
             }
@@ -103,7 +103,6 @@ class CatalogService extends AbstractService
         $response .= "laravel_session\n";
         $response .= $this->request->getSession()->getId()."\n";
         $response .= 'timestamp='.time();
-        $response .= "\nimport successed";
 
         return $response;
     }
