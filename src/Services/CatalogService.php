@@ -54,6 +54,7 @@ class CatalogService extends AbstractService
         $zipEnable = function_exists('zip_open') && $this->config->isUseZip();
         $response = 'zip='.($zipEnable ? 'yes' : 'no')."\n";
         $response .= 'file_limit='.$this->config->getFilePart();
+        $response .= "init successed";
 
         return $response;
     }
@@ -101,7 +102,8 @@ class CatalogService extends AbstractService
         $response = "success\n";
         $response .= "laravel_session\n";
         $response .= $this->request->getSession()->getId()."\n";
-        $response .= 'timestamp='.time();
+        $response .= 'timestamp='.time().'\n';
+        $response .= "import successed";
 
         return $response;
     }

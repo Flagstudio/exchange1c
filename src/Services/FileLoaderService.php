@@ -63,7 +63,7 @@ class FileLoaderService
                 unlink($filePath);
             }
 
-            return "success\n";
+            return "success\nfile successed";
         }
     }
 

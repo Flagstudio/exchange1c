@@ -64,7 +64,8 @@ class AuthService
             $response = "success\n";
             $response .= "laravel_session\n";
             $response .= $this->session->getId()."\n";
-            $response .= 'timestamp='.time();
+            $response .= 'timestamp='.time().'\n';
+            $response .= "checkauth successed";
             if ($this->session instanceof SessionInterface) {
                 $this->session->set(self::SESSION_KEY.'_auth', $this->config->getLogin());
             } elseif ($this->session instanceof Session) {
@@ -73,7 +74,7 @@ class AuthService
                 throw new Exchange1CException(sprintf('Session is not insatiable interface %s or %s', SessionInterface::class, Session::class));
             }
         } else {
-            $response = "failure\n";
+            $response = "failure\ncheckauth failed";
         }
 
         return $response;
