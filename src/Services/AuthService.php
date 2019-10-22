@@ -87,12 +87,11 @@ class AuthService
     public function auth(): void
     {
 //        $login = $this->config->getLogin();
-        $cookieId = $this->request->exchange1c_session;
 //        $user = $this->session->get(self::SESSION_KEY.'_auth', null);
-        $sessionId = $this->session->get(self::SESSION_KEY.'_auth', null);
-
-//        if (!$user || $user != $login) {
-        if (!$sessionId || $sessionId != $cookieId) {
+        $checkLogin = $this->request->server->get('PHP_AUTH_USER') === $this->config->getLogin();
+        $checkPassword = $this->request->server->get('PHP_AUTH_PW') === $this->config->getPassword();
+        $checkCookie = $this->request->exchange1c_session;
+        if (!($checkLogin && $checkPassword && $checkCookie)) {
             throw new Exchange1CException('auth error');
         }
     }
