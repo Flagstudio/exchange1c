@@ -61,15 +61,16 @@ class AuthService
             $this->request->server->get('PHP_AUTH_PW') === $this->config->getPassword()
         ) {
             $this->session->save();
+            $sessionId = $this->session->getId();
             $response = "success\n";
-            $response .= "laravel_session\n";
-            $response .= $this->session->getId()."\n";
-            $response .= 'timestamp='.time().'\n';
-            $response .= "checkauth successed";
+            $response .= "exchange1c_session\n";
+            $response .= $sessionId."\n";
+            $response .= 'timestamp='.time();
+            $response .= "\ncheckauth successed";
             if ($this->session instanceof SessionInterface) {
-                $this->session->set(self::SESSION_KEY.'_auth', $this->config->getLogin());
+                $this->session->set(self::SESSION_KEY.'_auth', $sessionId);
             } elseif ($this->session instanceof Session) {
-                $this->session->put(self::SESSION_KEY.'_auth', $this->config->getLogin());
+                $this->session->put(self::SESSION_KEY.'_auth', $sessionId);
             } else {
                 throw new Exchange1CException(sprintf('Session is not insatiable interface %s or %s', SessionInterface::class, Session::class));
             }
@@ -85,10 +86,13 @@ class AuthService
      */
     public function auth(): void
     {
-        $login = $this->config->getLogin();
-        $user = $this->session->get(self::SESSION_KEY.'_auth', null);
+//        $login = $this->config->getLogin();
+        $cookieId = $this->request->exchange1c_session;
+//        $user = $this->session->get(self::SESSION_KEY.'_auth', null);
+        $sessionId = $this->session->get(self::SESSION_KEY.'_auth', null);
 
-        if (!$user || $user != $login) {
+//        if (!$user || $user != $login) {
+        if (!$sessionId || $sessionId != $cookieId) {
             throw new Exchange1CException('auth error');
         }
     }

@@ -102,8 +102,8 @@ class CatalogService extends AbstractService
         $response = "success\n";
         $response .= "laravel_session\n";
         $response .= $this->request->getSession()->getId()."\n";
-        $response .= 'timestamp='.time().'\n';
-        $response .= "import successed";
+        $response .= 'timestamp='.time();
+        $response .= "\nimport successed";
 
         return $response;
     }
