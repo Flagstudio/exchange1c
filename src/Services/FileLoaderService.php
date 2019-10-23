@@ -63,7 +63,7 @@ class FileLoaderService
                 unlink($filePath);
             }
 
-            return "success\nfile successed";
+            return "success";
         }
     }
 
@@ -75,7 +75,9 @@ class FileLoaderService
         $tmp_files = glob($this->config->getImportDir().DIRECTORY_SEPARATOR.'*.*');
         if (is_array($tmp_files)) {
             foreach ($tmp_files as $v) {
-                unlink($v);
+                if (mb_stripos($v, 'classifier') === false) {
+                    unlink($v);
+                }
             }
         }
     }
