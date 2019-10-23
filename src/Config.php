@@ -46,6 +46,7 @@ class Config
         \Bigperson\Exchange1C\Interfaces\GroupInterface::class   => null,
         \Bigperson\Exchange1C\Interfaces\ProductInterface::class => null,
         \Bigperson\Exchange1C\Interfaces\OfferInterface::class   => null,
+        \Bigperson\Exchange1C\Interfaces\DocumentInterface::class => null,
     ];
 
     /**

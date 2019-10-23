@@ -54,7 +54,6 @@ class CatalogService extends AbstractService
         $zipEnable = function_exists('zip_open') && $this->config->isUseZip();
         $response = 'zip='.($zipEnable ? 'yes' : 'no')."\n";
         $response .= 'file_limit='.$this->config->getFilePart();
-        $response .= "init successed";
 
         return $response;
     }
