@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class AuthService
 {
-    public const SESSION_KEY = 'cml_import';
+    public const SESSION_KEY = 'exchange1c_session_id';
 
     /**
      * @var Request
@@ -56,25 +56,32 @@ class AuthService
      */
     public function checkAuth()
     {
-        if (
-            $this->request->server->get('PHP_AUTH_USER') === $this->config->getLogin() &&
-            $this->request->server->get('PHP_AUTH_PW') === $this->config->getPassword()
-        ) {
-            $this->session->save();
+        if ( $this->request->server->get('PHP_AUTH_USER') === $this->config->getLogin() &&
+            $this->request->server->get('PHP_AUTH_PW') === $this->config->getPassword() )
+        {
             $sessionId = $this->session->getId();
             $response = "success\n";
-            $response .= "exchange1c_session\n";
+            $response .= "exchange1c_session_id\n";
             $response .= $sessionId."\n";
             $response .= 'timestamp='.time();
+
             if ($this->session instanceof SessionInterface) {
-                $this->session->set(self::SESSION_KEY.'_auth', $sessionId);
-            } elseif ($this->session instanceof Session) {
-                $this->session->put(self::SESSION_KEY.'_auth', $sessionId);
-            } else {
+                $this->session->set(self::SESSION_KEY, $sessionId);
+            }
+
+            elseif ($this->session instanceof Session) {
+                $this->session->put(self::SESSION_KEY, $sessionId);
+            }
+
+            else {
                 throw new Exchange1CException(sprintf('Session is not insatiable interface %s or %s', SessionInterface::class, Session::class));
             }
-        } else {
-            $response = "failure";
+
+            $this->session->save();
+        }
+
+        else {
+            $response = "failure\nCheckauth error. Wrong login or password.";
         }
 
         return $response;
