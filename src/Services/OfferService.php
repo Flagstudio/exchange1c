@@ -81,12 +81,14 @@ class OfferService
         $offers = $commerce->offerPackage->getOffers();
         foreach ($commerce->offerPackage->getOffers() as $offer) {
             $productId = $offer->getClearId();
+            $offerId = $offer->id;
             if ($product = $this->findProductModelById($productId)) {
                 $model = $product->getOffer1c($offer);
                 $this->parseProductOffer($model, $offer);
                 $this->_ids[] = $model->getPrimaryKey();
             } else {
-                throw new Exchange1CException("Продукт $productId не найден в базе");
+                \Log::error("Exchange 1C ERROR. File={$filename}\nOffer ид={$offerId} import fail\nBecause Product ид={$productId} is missing");
+//                throw new Exchange1CException("Продукт $productId не найден в базе");
             }
             unset($model);
         }

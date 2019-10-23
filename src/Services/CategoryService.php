@@ -82,9 +82,14 @@ class CategoryService
         $classifierFile = $this->config->getFullPath('classifier.xml');
         if ($commerce->classifier->xml) {
             $commerce->classifier->xml->saveXML($classifierFile);
-        } else {
+        }
+        elseif (file_exists($classifierFile)) {
             $commerce->classifier->xml = simplexml_load_string(file_get_contents($classifierFile));
         }
+        else {
+            throw new Exchange1CException("Exchange can not continue. File classifier.xml is missing.");
+        }
+
         $this->beforeProductsSync();
 
         if ($groupClass = $this->getGroupClass()) {
