@@ -1,11 +1,70 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Bigperson\Exchange1C\Services;
 
+use Bigperson\Exchange1C\Config;
+use Symfony\Component\HttpFoundation\Request;
 
-class OrderExchangeService extends AbstractService
+class OrderExchangeService
 {
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
+     * @var AuthService
+     */
+    protected $authService;
+
+    /**
+     * @var FileLoaderService
+     */
+    protected $loaderService;
+
+    /**
+     * @var CategoryService
+     */
+    protected $orderService;
+
+    /**
+     * @var OfferService
+     */
+    protected $orderItemService;
+
+    /**
+     * AbstractService constructor.
+     *
+     * @param Request           $request
+     * @param Config            $config
+     * @param AuthService       $authService
+     * @param FileLoaderService $loaderService
+     * @param OrderService      $orderService
+     * @param OrderItemService      $orderItemService
+     */
+    public function __construct(
+        Request $request,
+        Config $config,
+        AuthService $authService,
+        FileLoaderService $loaderService,
+        OrderService $orderService
+//        OrderItemService $orderItemService
+    ) {
+        $this->request = $request;
+        $this->config = $config;
+        $this->authService = $authService;
+        $this->loaderService = $loaderService;
+        $this->orderService = $orderService;
+//        $this->orderItemService = $orderItemService;
+    }
+
     public function checkauth(): string
     {
         return $this->authService->checkAuth();
@@ -26,9 +85,9 @@ class OrderExchangeService extends AbstractService
     {
         $this->authService->auth();
 
+        $commerceMLOrders = $this->orderService->query();
 
-
-//        return response()->file();
+        return response()->file($commerceMLOrders);
     }
 
     public function success(): bool
