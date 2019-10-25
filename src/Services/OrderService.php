@@ -9,6 +9,9 @@ use Bigperson\Exchange1C\Exceptions\Exchange1CException;
 use Bigperson\Exchange1C\Interfaces\DocumentInterface;
 use Bigperson\Exchange1C\Interfaces\EventDispatcherInterface;
 use Bigperson\Exchange1C\Interfaces\ModelBuilderInterface;
+use Illuminate\Support\Carbon;
+use Symfony\Component\HttpFoundation\Request;
+use Zenwalker\CommerceML\CommerceML;
 
 class OrderService
 {
@@ -58,8 +61,17 @@ class OrderService
      *
      * @throws Exchange1CException
      */
-    public function query()
+    public function query(): string
     {
+        $ordersFile = $this->config->getFullPath('orders.xml');
+        $currentDateTime = Carbon::now();
+        $commerceMLData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+                           <КоммерческаяИнформация ВерсияСхемы=\"2.05\" ДатаФормирования=\"{$currentDateTime}\">
+                           </КоммерческаяИнформация>";
+
+        $ordersCommerceML = new \SimpleXMLElement($commerceMLData, null, false);
+        $ordersCommerceML->addChild('Документ');
+
         $orderClass = $this->getOrderClass();
         if ($orderClass) {
             $ordersToExport = $orderClass::findDocuments1c();
@@ -68,6 +80,8 @@ class OrderService
             throw new Exchange1CException("Order class model is not implemented");
         }
 
+        $ordersCommerceML->saveXML($ordersFile);
+        return $ordersFile;
 //        $filename = basename($this->request->get('filename'));
 //        $commerce = new CommerceML();
 //        $commerce->loadImportXml($this->config->getFullPath($filename));

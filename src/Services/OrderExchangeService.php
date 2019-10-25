@@ -81,13 +81,11 @@ class OrderExchangeService
         return $response;
     }
 
-    public function query()
+    public function query(): string
     {
         $this->authService->auth();
 
-        $commerceMLOrders = $this->orderService->query();
-
-        return response()->file($commerceMLOrders);
+        return $this->orderService->query();
     }
 
     public function success(): bool
