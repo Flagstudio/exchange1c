@@ -90,8 +90,7 @@ class OrderExchangeService
 
     public function success(): bool
     {
-        // TODO: Mark orders from orders.xml as sent
-        return true;
+        return $this->orderService->setOrdersExported();
     }
 
     public function import(): string
