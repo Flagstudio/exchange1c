@@ -82,6 +82,10 @@ class OfferService
         foreach ($commerce->offerPackage->getOffers() as $offer) {
             $productId = $offer->getClearId();
             $offerId = $offer->id;
+            if ($offerId == $productId) {
+                \Log::error("Exchange 1C ERROR. File={$filename}\nProbably Offer has no ид. Offer productId={$productId} IS EQUAL to offerId={$offerId}");
+                continue;
+            }
             if ($product = $this->findProductModelById($productId)) {
                 $model = $product->getOffer1c($offer);
                 $this->parseProductOffer($model, $offer);
