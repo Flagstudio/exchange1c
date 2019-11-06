@@ -330,7 +330,7 @@ class OrderService
         if ($ids) {
             $orderClass = $this->getOrderClass();
             if ($orderClass) {
-                $orderClass::whereIn('id', $this->_ids)->update(['exported' => Carbon::now()]);
+                $orderClass::whereIn('id', $ids)->update(['exported' => Carbon::now()]);
                 return true;
             }
             else {
