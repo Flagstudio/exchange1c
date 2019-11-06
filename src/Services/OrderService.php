@@ -252,7 +252,8 @@ class OrderService
                 $orderItems = $order->getOffers1c();
                 foreach ($orderItems as $orderItem) {
                     $docItem = $docItems->addChild('Товар');
-                    $docItem->addChild('Наименование', $orderItem->solditem);
+                    $docItem->addChild('Ид', $orderItem->stock ? $orderItem->stock->ones_id : '');
+                    $docItem->addChild('Наименование', $orderItem->stock ? $orderItem->stock->title : '');
                     $baseItem = $docItem->addChild('БазоваяЕдиница', 'шт');
                     {
                         $baseItem->addAttribute('Код', '796');
@@ -319,13 +320,13 @@ class OrderService
             }
         }
 
-        $sessionId = $this->request->cookies->get('bs_gs_session');
+        $sessionId = $this->request->cookies->get('exchange1c_session_id');
         $this->request->session()->put($sessionId, $this->_ids);
     }
 
     public function setOrdersExported(): bool
     {
-        $sessionId = $this->request->cookies->get('bs_gs_session');
+        $sessionId = $this->request->cookies->get('exchange1c_session_id');
         $ids = $this->request->session()->get($sessionId);
         if ($ids) {
             $orderClass = $this->getOrderClass();
