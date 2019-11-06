@@ -318,17 +318,25 @@ class OrderService
                 }
             }
         }
+
+        $sessionId = $this->request->cookies->get('bs_gs_session');
+        $this->request->session()->put($sessionId, $this->_ids);
     }
 
     public function setOrdersExported(): bool
     {
-        $orderClass = $this->getOrderClass();
-        if ($orderClass) {
-            $orderClass::whereIn('id', $this->_ids)->update(['exported' => Carbon::now()]);
-            return true;
+        $sessionId = $this->request->cookies->get('bs_gs_session');
+        $ids = $this->request->session()->get($sessionId);
+        if ($ids) {
+            $orderClass = $this->getOrderClass();
+            if ($orderClass) {
+                $orderClass::whereIn('id', $this->_ids)->update(['exported' => Carbon::now()]);
+                return true;
+            }
+            else {
+                throw new Exchange1CException("Order class model is not implemented");
+            }
         }
-        else {
-            throw new Exchange1CException("Order class model is not implemented");
-        }
+        return false;
     }
 }
