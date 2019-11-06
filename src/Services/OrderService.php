@@ -92,7 +92,7 @@ class OrderService
         return $this->modelBuilder->getInterfaceClass($this->config, DocumentInterface::class);
     }
 
-    public function packageOrdersToCommerceML(\SimpleXMLElement $ordersCommerceML, array $ordersToExport)
+    public function packageOrdersToCommerceML(\SimpleXMLElement $ordersCommerceML, $ordersToExport)
     {
         unset($this->_ids);
         foreach ($ordersToExport as $order) {
