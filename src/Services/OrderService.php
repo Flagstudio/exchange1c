@@ -318,41 +318,37 @@ class OrderService
                     $docRequisite->addChild('Значение', $order->updated_at->format('Y-m-d h:m:s'));
                 }
             }
+            $order->exported = 0;
+            $order->save();
         }
 
         $sessionId = $this->request->cookies->get('exchange1c_session_id', null);
         if ($sessionId == null) {
             $sessionId = session()->getId();
-//            session(['exchange1c_session_id' => $sessionId]);
         }
-//        $this->request->session()->put($sessionId, $this->_ids);
-//        session()->put($sessionId, $this->_ids);
         session()->put($sessionId, $this->_ids);
-        $orderIds = session()->get($sessionId);
-        $orderInStr = implode(",", $orderIds);
-        \Log::debug("ORDER EXCHANGE 1. packageOrdersToCommerceML.\nSessionId from request: {$sessionId}\nOrders ids in session: [{$orderInStr}]");
+        $ordersInStr = implode(",", $this->_ids);
+        \Log::debug("ORDER 1C EXCHANGE 1. Orders ids sent to 1C: [{$ordersInStr}]");
     }
 
     public function setOrdersExported(): string
     {
-        $sessionId = $this->request->cookies->get('exchange1c_session_id');
-        if ($sessionId == null) {
-            $sessionId = session()->getId();
-//            session(['exchange1c_session_id' => $sessionId]);
-        }
-        $ids = session()->get($sessionId, []);
-        $orderInStr = implode(",", $ids);
-        \Log::debug("ORDER EXCHANGE 2. setOrdersExported.\nSessionId from request: {$sessionId}\nOrders ids in session: [{$orderInStr}]");
-        if ($ids) {
-            $orderClass = $this->getOrderClass();
-            if ($orderClass) {
+//        $sessionId = $this->request->cookies->get('exchange1c_session_id');
+//        $ids = session()->get($sessionId, []);
+//        $orderInStr = implode(",", $ids);
+//        \Log::debug("ORDER EXCHANGE 2. setOrdersExported.\nSessionId from request: {$sessionId}\nOrders ids in session: [{$orderInStr}]");
+        $response = "failure\nOrders NOT marked as sent";
+        $orderClass = $this->getOrderClass();
+        if ($orderClass) {
+            $ids = $orderClass::where('created_at', 0)->get('id');
+            if ($ids) {
                 $orderClass::whereIn('id', $ids)->update(['exported' => Carbon::now()]);
                 $response = "success\n";
                 $response .= "Orders marked as sent\n";
             }
-            else {
-                throw new Exchange1CException("Order class model is not implemented");
-            }
+        }
+        else {
+            throw new Exchange1CException("Order class model is not implemented");
         }
         return $response;
     }
