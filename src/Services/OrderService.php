@@ -98,6 +98,9 @@ class OrderService
         $this->_ids = [];
         foreach ($ordersToExport as $order) {
             $this->_ids[] = $order->id;
+            $order->exported = '0000-01-01 00:00:00';
+            $order->ones_id = $order->id + config('app.orderOneSIdForSync');
+
             $docElem = $ordersCommerceML->addChild('Документ');
             $docElem->addChild('Ид', "wc1c#order#{$order->ones_id}");
             $docElem->addChild('Номер', $order->ones_id);
@@ -114,7 +117,7 @@ class OrderService
                 if ($order->billingAddress) {
                     $payer = $counterparties->addChild('Контрагент');
                     {
-                        $payer->addChild('Ид', "wc1c#user#{$order->billingAddress->ones_id}");
+                        $payer->addChild('Ид', "wc1c#user#{$order->billingAddress->id}");
                         $payer->addChild('Роль', 'Плательщик');
                         $payer->addChild('Наименование', $order->billingAddress->getTitle());
                         $payer->addChild('ПолноеНаименование', $order->billingAddress->getFullTitle());
@@ -180,7 +183,7 @@ class OrderService
                 if ($order->shippingAddress) {
                     $recipient = $counterparties->addChild('Контрагент');
                     {
-                        $recipient->addChild('Ид', "wc1c#user#{$order->shippingAddress->ones_id}");
+                        $recipient->addChild('Ид', "wc1c#user#{$order->shippingAddress->id}");
                         $recipient->addChild('Роль', 'Получатель');
                         $recipient->addChild('Наименование', $order->shippingAddress->getTitle());
                         $recipient->addChild('ПолноеНаименование', $order->shippingAddress->getFullTitle());
@@ -279,6 +282,12 @@ class OrderService
             {
                 $docRequisite = $docRequisites->addChild('ЗначениеРеквизита');
                 {
+                    $docRequisite->addChild('Наименование', 'Тип заказа');
+                    $orderType = ($order->type == 'Дозаказ') ? ("{$order->type} к заказу №{$order->mainorder->ones_id} от {$order->mainorder->created_at->format('d.m.Y')} на {$order->mainorder->sum} руб.") : $order->type;
+                    $docRequisite->addChild('Значение', $orderType);
+                }
+                $docRequisite = $docRequisites->addChild('ЗначениеРеквизита');
+                {
                     $docRequisite->addChild('Наименование', 'Метод оплаты');
                     $docRequisite->addChild('Значение', 'Оплата по реквизитам');
                 }
@@ -319,7 +328,6 @@ class OrderService
                     $docRequisite->addChild('Значение', $order->updated_at->format('Y-m-d h:m:s'));
                 }
             }
-            $order->exported = '0000-01-01 00:00:00';
             $order->save();
         }
 
@@ -352,5 +360,29 @@ class OrderService
             throw new Exchange1CException("Order class model is not implemented");
         }
         return $response;
+    }
+
+    public function import(): void
+    {
+        $orderClass = $this->getOrderClass();
+        if ($orderClass) {
+            $filename = basename($this->request->get('filename'));
+            $commerce = new CommerceML();
+            $commerce->loadOrdersXml($this->config->getFullPath($filename));
+            foreach($commerce->order->documents as $order) {
+                $orderOneSId = (string)$order->Ид;
+                $orderOneSNumber = (string)$order->Номер;
+                // Извлечь значение реквизита "Статус заказа"
+                // Извлечь значение реквизита "Дата изменения статуса"
+                $orderClass::updateOrderStatus($orderOneSId, $orderOneSNumber);
+                \Log::debug("ORDER 1C EXCHANGE. Order ид={$orderOneSId}, номер={$orderOneSNumber} changed");
+            }
+        }
+        else {
+            throw new Exchange1CException("Order class model is not implemented");
+        }
+        
+
+
     }
 }

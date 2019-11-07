@@ -35,11 +35,6 @@ class OrderExchangeService
     protected $orderService;
 
     /**
-     * @var OfferService
-     */
-    protected $orderItemService;
-
-    /**
      * AbstractService constructor.
      *
      * @param Request           $request
@@ -47,7 +42,6 @@ class OrderExchangeService
      * @param AuthService       $authService
      * @param FileLoaderService $loaderService
      * @param OrderService      $orderService
-     * @param OrderItemService      $orderItemService
      */
     public function __construct(
         Request $request,
@@ -55,14 +49,12 @@ class OrderExchangeService
         AuthService $authService,
         FileLoaderService $loaderService,
         OrderService $orderService
-//        OrderItemService $orderItemService
     ) {
         $this->request = $request;
         $this->config = $config;
         $this->authService = $authService;
         $this->loaderService = $loaderService;
         $this->orderService = $orderService;
-//        $this->orderItemService = $orderItemService;
     }
 
     public function checkauth(): string
@@ -95,22 +87,15 @@ class OrderExchangeService
 
     public function import(): string
     {
-//        $this->authService->auth();
-//        $filename = $this->request->get('filename');
-//        if (mb_stripos($filename, 'import_files') === false) {
-//            if (mb_stripos($filename, 'import') !== false) {
-//                $this->categoryService->import();
-//            }
-//            if (mb_stripos($filename, 'offers') !== false) {
-//                $this->offerService->import();
-//            }
-//        }
-//
-//        $response = "success\n";
-//        $response .= "laravel_session\n";
-//        $response .= $this->request->getSession()->getId()."\n";
-//        $response .= 'timestamp='.time();
-//
-//        return $response;
+        $this->authService->auth();
+
+        $this->orderService->import();
+
+        $response = "success\n";
+        $response .= "laravel_session\n";
+        $response .= $this->request->getSession()->getId()."\n";
+        $response .= 'timestamp='.time();
+
+        return $response;
     }
 }
