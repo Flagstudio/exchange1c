@@ -320,24 +320,40 @@ class OrderService
             }
         }
 
-        $sessionId = $this->request->cookies->get('exchange1c_session_id');
-        $this->request->session()->put($sessionId, $this->_ids);
+        $sessionId = $this->request->cookies->get('exchange1c_session_id', null);
+        if ($sessionId == null) {
+            $sessionId = session()->getId();
+//            session(['exchange1c_session_id' => $sessionId]);
+        }
+//        $this->request->session()->put($sessionId, $this->_ids);
+//        session()->put($sessionId, $this->_ids);
+        session()->put($sessionId, $this->_ids);
+        $orderIds = session()->get($sessionId);
+        $orderInStr = implode(",", $orderIds);
+        \Log::debug("ORDER EXCHANGE 1. packageOrdersToCommerceML.\nSessionId from request: {$sessionId}\nOrders ids in session: [{$orderInStr}]");
     }
 
-    public function setOrdersExported(): bool
+    public function setOrdersExported(): string
     {
         $sessionId = $this->request->cookies->get('exchange1c_session_id');
-        $ids = $this->request->session()->get($sessionId);
+        if ($sessionId == null) {
+            $sessionId = session()->getId();
+//            session(['exchange1c_session_id' => $sessionId]);
+        }
+        $ids = session()->get($sessionId, []);
+        $orderInStr = implode(",", $ids);
+        \Log::debug("ORDER EXCHANGE 2. setOrdersExported.\nSessionId from request: {$sessionId}\nOrders ids in session: [{$orderInStr}]");
         if ($ids) {
             $orderClass = $this->getOrderClass();
             if ($orderClass) {
                 $orderClass::whereIn('id', $ids)->update(['exported' => Carbon::now()]);
-                return true;
+                $response = "success\n";
+                $response .= "Orders marked as sent\n";
             }
             else {
                 throw new Exchange1CException("Order class model is not implemented");
             }
         }
-        return false;
+        return $response;
     }
 }

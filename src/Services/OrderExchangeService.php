@@ -88,7 +88,7 @@ class OrderExchangeService
         return $this->orderService->query();
     }
 
-    public function success(): bool
+    public function success(): string
     {
         return $this->orderService->setOrdersExported();
     }
