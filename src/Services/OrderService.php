@@ -95,6 +95,7 @@ class OrderService
     public function packageOrdersToCommerceML(\SimpleXMLElement $ordersCommerceML, $ordersToExport)
     {
         unset($this->_ids);
+        $this->_ids = [];
         foreach ($ordersToExport as $order) {
             $this->_ids[] = $order->id;
             $docElem = $ordersCommerceML->addChild('Документ');
@@ -318,7 +319,7 @@ class OrderService
                     $docRequisite->addChild('Значение', $order->updated_at->format('Y-m-d h:m:s'));
                 }
             }
-            $order->exported = 0;
+            $order->exported = '0000-01-01 00:00:00';
             $order->save();
         }
 
@@ -340,7 +341,7 @@ class OrderService
         $response = "failure\nOrders NOT marked as sent";
         $orderClass = $this->getOrderClass();
         if ($orderClass) {
-            $ids = $orderClass::where('created_at', 0)->get('id');
+            $ids = $orderClass::where('exported', '0000-01-01 00:00:00')->get('id');
             if ($ids) {
                 $orderClass::whereIn('id', $ids)->update(['exported' => Carbon::now()]);
                 $response = "success\n";
