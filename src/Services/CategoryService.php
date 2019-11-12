@@ -183,14 +183,18 @@ class CategoryService
      */
     protected function parseImage(ProductInterface $model, Product $product)
     {
+        \Log::debug("Exchange 1C PARSEIMAGE IN: product ид={$product->id}, id={$model->id}");
         $images = $product->getImages();
         foreach ($images as $image) {
 //            $path = $this->config->getFullPath(basename($image->path));
             $path = $this->config->getFullPath($image->path);
+            \Log::debug("Image full path={$path}");
             if (file_exists($path)) {
+                \Log::debug("Image file exists");
                 $model->addImage1c($path, $image->caption);
             }
         }
+        \Log::debug("Exchange 1C PARSEIMAGE OUT");
     }
 
     protected function beforeProductsSync(): void
