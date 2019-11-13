@@ -44,7 +44,8 @@ class FileLoaderService
     public function load(): string
     {
         \Log::debug("Exchange 1C FILE LOADING IN");
-        $filename = basename($this->request->get('filename'));
+//        $filename = basename($this->request->get('filename'));
+        $filename = $this->request->get('filename');
         $filePath = $this->config->getFullPath($filename);
         if ($filename === 'orders.xml') {
             throw new \LogicException('This method is not released');
