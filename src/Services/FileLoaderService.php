@@ -43,28 +43,43 @@ class FileLoaderService
      */
     public function load(): string
     {
+        \Log::debug("Exchange 1C FILE LOADING IN");
         $filename = basename($this->request->get('filename'));
         $filePath = $this->config->getFullPath($filename);
         if ($filename === 'orders.xml') {
             throw new \LogicException('This method is not released');
-        } else {
-            $directory = dirname($filePath);
-            if (!is_dir($directory)) {
-                mkdir($directory, 0755, true);
-            }
-            $f = fopen($filePath, 'w+');
-            fwrite($f, file_get_contents('php://input'));
-            fclose($f);
-            if ($this->config->isUseZip()) {
-                $zip = new \ZipArchive();
-                $zip->open($filePath);
-                $zip->extractTo($this->config->getImportDir());
-                $zip->close();
-                unlink($filePath);
-            }
-
-            return "success";
         }
+
+        $directory = dirname($filePath);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+        $f = fopen($filePath, 'w+');
+        $fileContents = file_get_contents('php://input');
+        if ($fileContents) {
+            \Log::debug("Got contents of filename={$filename}");
+            $fwriteResult = fwrite($f, $fileContents);
+            if ($fwriteResult) {
+                \Log::debug("{$fwriteResult} bytes written");
+            }
+            else {
+                \Log::error("Contents of filename={$filename} NOT written. File NOT SAVED");
+            }
+        }
+        else {
+            \Log::error("Contents of filename={$filename} NOT received. File NOT LOADED");
+        }
+        fclose($f);
+        if ($this->config->isUseZip()) {
+            $zip = new \ZipArchive();
+            $zip->open($filePath);
+            $zip->extractTo($this->config->getImportDir());
+            $zip->close();
+            unlink($filePath);
+        }
+
+        \Log::debug("Exchange 1C FILE LOADING OUT");
+        return "success";
     }
 
     /**
