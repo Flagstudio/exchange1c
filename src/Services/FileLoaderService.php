@@ -43,7 +43,7 @@ class FileLoaderService
      */
     public function load(): string
     {
-        \Log::debug("Exchange 1C FILE LOADING IN");
+        \Log::channel('import_1c')->debug("Exchange 1C FILE LOADING IN");
 //        $filename = basename($this->request->get('filename'));
         $filename = $this->request->get('filename');
         $filePath = $this->config->getFullPath($filename);
@@ -58,17 +58,17 @@ class FileLoaderService
         $f = fopen($filePath, 'w+');
         $fileContents = file_get_contents('php://input');
         if ($fileContents) {
-            \Log::debug("Got contents of filename={$filename}");
+            \Log::channel('import_1c')->debug("Got contents of filename={$filename}");
             $fwriteResult = fwrite($f, $fileContents);
             if ($fwriteResult) {
-                \Log::debug("{$fwriteResult} bytes written");
+                \Log::channel('import_1c')->debug("{$fwriteResult} bytes written");
             }
             else {
-                \Log::error("Contents of filename={$filename} NOT written. File NOT SAVED");
+                \Log::channel('import_1c')->error("Contents of filename={$filename} NOT written. File NOT SAVED");
             }
         }
         else {
-            \Log::error("Contents of filename={$filename} NOT received. File NOT LOADED");
+            \Log::channel('import_1c')->error("Contents of filename={$filename} NOT received. File NOT LOADED");
         }
         fclose($f);
         if ($this->config->isUseZip()) {
@@ -79,7 +79,7 @@ class FileLoaderService
             unlink($filePath);
         }
 
-        \Log::debug("Exchange 1C FILE LOADING OUT");
+        \Log::channel('import_1c')->debug("Exchange 1C FILE LOADING OUT");
         return "success";
     }
 

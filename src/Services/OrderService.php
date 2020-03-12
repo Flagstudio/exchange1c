@@ -337,7 +337,7 @@ class OrderService
         }
         session()->put($sessionId, $this->_ids);
         $ordersInStr = implode(",", $this->_ids);
-        \Log::debug("ORDER 1C EXCHANGE 1. Orders ids sent to 1C: [{$ordersInStr}]");
+        \Log::channel('import_1c')->debug("ORDER 1C EXCHANGE 1. Orders ids sent to 1C: [{$ordersInStr}]");
     }
 
     public function setOrdersExported(): string
@@ -375,7 +375,7 @@ class OrderService
                 // Извлечь значение реквизита "Статус заказа"
                 // Извлечь значение реквизита "Дата изменения статуса"
                 $orderClass::updateOrderStatus($orderOneSId, $orderOneSNumber);
-                \Log::debug("ORDER 1C EXCHANGE. Order ид={$orderOneSId}, номер={$orderOneSNumber} changed");
+                \Log::channel('import_1c')->debug("ORDER 1C EXCHANGE. Order ид={$orderOneSId}, номер={$orderOneSNumber} changed");
             }
         }
         else {
