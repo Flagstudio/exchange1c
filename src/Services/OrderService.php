@@ -109,7 +109,7 @@ class OrderService
             $docElem->addChild('ХозОперация', 'Заказ товара');
             $docElem->addChild('Роль', 'Продавец');
             $docElem->addChild('Валюта', 'RUB');
-            $docElem->addChild('Сумма', $order->sum);
+            $docElem->addChild('Сумма', number_format($order->sum,2, '.', ''));
             $docElem->addChild('Комментарий', $order->shippingAddress ? $order->shippingAddress->comment : '');
 
             $counterparties = $docElem->addChild('Контрагенты');
@@ -124,6 +124,8 @@ class OrderService
                         $payer->addChild('Фамилия', $order->billingAddress->last_name);
                         $payer->addChild('Имя', $order->billingAddress->first_name);
                         $payer->addChild('Отчество', $order->billingAddress->patronymic);
+                        $payer->addChild('Организация', $order->billingAddress->company);
+                        $payer->addChild('ИНН', $order->billingAddress->inn);
 
                         $payerContacts = $payer->addChild('Контакты');
                         {
@@ -264,9 +266,9 @@ class OrderService
                         $baseItem->addAttribute('НаименованиеПолное', 'Штука');
                         $baseItem->addAttribute('МеждународноеСокращение', 'PCE');
                     }
-                    $docItem->addChild('ЦенаЗаЕдиницу', $orderItem->soldprice);
+                    $docItem->addChild('ЦенаЗаЕдиницу', number_format($orderItem->soldprice * ((100 - $orderItem->discount)/100), 2, '.', ''));
                     $docItem->addChild('Количество', $orderItem->qty);
-                    $docItem->addChild('Сумма', $orderItem->soldprice * $orderItem->qty);
+                    $docItem->addChild('Сумма', number_format($orderItem->soldprice * $orderItem->qty * ((100 - $orderItem->discount)/100), 2, '.', ''));
                     $docItemRequisites = $docItem->addChild('ЗначенияРеквизитов');
                     {
                         $docItemRequisite = $docItemRequisites->addChild('ЗначениеРеквизита');
@@ -283,7 +285,7 @@ class OrderService
                 $docRequisite = $docRequisites->addChild('ЗначениеРеквизита');
                 {
                     $docRequisite->addChild('Наименование', 'Тип заказа');
-                    $orderType = ($order->type == 'Дозаказ') ? ("{$order->type} к заказу №{$order->mainorder->ones_id} от {$order->mainorder->created_at->format('d.m.Y')} на {$order->mainorder->sum} руб.") : $order->type;
+                    $orderType = ($order->type == 'Дозаказ') ? ("{$order->type} к заказу №{$order->mainorder->ones_id} от {$order->mainorder->created_at->format('d.m.Y')} на " . number_format($order->mainorder->sum, 2, '.', '') . " руб.") : $order->type;
                     $docRequisite->addChild('Значение', $orderType);
                 }
                 $docRequisite = $docRequisites->addChild('ЗначениеРеквизита');
