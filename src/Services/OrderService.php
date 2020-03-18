@@ -259,7 +259,7 @@ class OrderService
                 foreach ($orderItems as $orderItem) {
                     $docItem = $docItems->addChild('Товар');
                     $docItem->addChild('Ид', $orderItem->stock ? $orderItem->stock->ones_id : '');
-                    $docItem->addChild('Наименование', $orderItem->stock ? $orderItem->stock->title : '');
+                    $docItem->addChild('Наименование', $orderItem->stock ? htmlspecialchars($orderItem->stock->title) : '');
                     $baseItem = $docItem->addChild('БазоваяЕдиница', 'шт');
                     {
                         $baseItem->addAttribute('Код', '796');
