@@ -43,9 +43,9 @@ class FileLoaderService
      */
     public function load(): string
     {
-        \Log::channel('import_1c')->debug("Exchange 1C FILE LOADING IN");
 //        $filename = basename($this->request->get('filename'));
         $filename = $this->request->get('filename');
+        \Log::channel('import_1c')->debug("{$filename}: FILE LOADING IN");
         $filePath = $this->config->getFullPath($filename);
         if ($filename === 'orders.xml') {
             throw new \LogicException('This method is not released');
@@ -58,17 +58,17 @@ class FileLoaderService
         $f = fopen($filePath, 'w+');
         $fileContents = file_get_contents('php://input');
         if ($fileContents) {
-            \Log::channel('import_1c')->debug("Got contents of filename={$filename}");
+            \Log::channel('import_1c')->debug('File received');
             $fwriteResult = fwrite($f, $fileContents);
             if ($fwriteResult) {
                 \Log::channel('import_1c')->debug("{$fwriteResult} bytes written");
             }
             else {
-                \Log::channel('import_1c')->error("Contents of filename={$filename} NOT written. File NOT SAVED");
+                \Log::channel('import_1c')->error('File NOT WRITTEN');
             }
         }
         else {
-            \Log::channel('import_1c')->error("Contents of filename={$filename} NOT received. File NOT LOADED");
+            \Log::channel('import_1c')->error('File NOT RECEIVED');
         }
         fclose($f);
         if ($this->config->isUseZip()) {
@@ -79,7 +79,7 @@ class FileLoaderService
             unlink($filePath);
         }
 
-        \Log::channel('import_1c')->debug("Exchange 1C FILE LOADING OUT");
+        \Log::channel('import_1c')->debug("{$filename}: FILE LOADING OUT");
         return "success";
     }
 

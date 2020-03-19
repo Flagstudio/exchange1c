@@ -71,6 +71,7 @@ class OfferService
     public function import()
     {
         $filename = basename($this->request->get('filename'));
+        \Log::channel('import_1c')->debug("{$filename}: FILE IMPORT IN");
         $this->_ids = [];
         $commerce = new CommerceML();
         $commerce->loadOffersXml($this->config->getFullPath($filename));
@@ -79,9 +80,11 @@ class OfferService
         }
         $this->beforeOfferSync();
         $offers = $commerce->offerPackage->getOffers();
+        $offers ? \Log::channel('import_1c')->debug('Got offers from xml') : \Log::channel('import_1c')->debug('NOT GOT offers from xml');
         foreach ($commerce->offerPackage->getOffers() as $offer) {
             $productId = $offer->getClearId();
             $offerId = $offer->id;
+            \Log::channel('import_1c')->debug("Offer import BEGIN: {$offerId}");
             if ($offerId == $productId) {
                 \Log::channel('import_1c')->error("Exchange 1C ERROR. File={$filename}\nProbably Offer has no ид. Offer productId={$productId} IS EQUAL to offerId={$offerId}");
                 continue;
@@ -92,11 +95,12 @@ class OfferService
                 $this->_ids[] = $model->getPrimaryKey();
             } else {
                 \Log::channel('import_1c')->error("Exchange 1C ERROR. File={$filename}\nOffer ид={$offerId} import fail\nBecause Product ид={$productId} is missing");
-//                throw new Exchange1CException("Продукт $productId не найден в базе");
             }
             unset($model);
+            \Log::channel('import_1c')->debug("Offer import END: {$offerId}");
         }
         $this->afterOfferSync();
+        \Log::channel('import_1c')->debug("{$filename}: FILE IMPORT OUT");
     }
 
     /**
@@ -128,10 +132,12 @@ class OfferService
      */
     protected function parseProductOffer(OfferInterface $model, Offer $offer): void
     {
+        \Log::channel('import_1c')->debug("parse OFFER IN: offer ид={$offer->id}, id={$model->id}");
         $this->beforeUpdateOffer($model, $offer);
         $this->parseSpecifications($model, $offer);
         $this->parsePrice($model, $offer);
         $this->afterUpdateOffer($model, $offer);
+        \Log::channel('import_1c')->debug("parse OFFER OUT: offer ид={$offer->id}, id={$model->id}");
     }
 
     /**

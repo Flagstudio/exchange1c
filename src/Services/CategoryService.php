@@ -77,6 +77,7 @@ class CategoryService
     public function import(): void
     {
         $filename = basename($this->request->get('filename'));
+        \Log::channel('import_1c')->debug("{$filename}: FILE IMPORT IN");
         $commerce = new CommerceML();
         $commerce->loadImportXml($this->config->getFullPath($filename));
         $classifierFile = $this->config->getFullPath('classifier.xml');
@@ -109,6 +110,7 @@ class CategoryService
             gc_collect_cycles();
         }
         $this->afterProductsSync();
+        \Log::channel('import_1c')->debug("{$filename}: FILE IMPORT OUT");
     }
 
     /**
@@ -133,6 +135,7 @@ class CategoryService
      */
     protected function parseProduct(ProductInterface $model, Product $product): void
     {
+        \Log::channel('import_1c')->debug("parse PRODUCT IN: product ид={$product->id}, id={$model->id}");
         $this->beforeUpdateProduct($model);
         $model->setRaw1cData($product->owner, $product);
         $this->parseGroups($model, $product);
@@ -142,6 +145,7 @@ class CategoryService
         $this->afterUpdateProduct($model);
 
         unset($group);
+        \Log::channel('import_1c')->debug("parse PRODUCT OUT: product ид={$product->id}, id={$model->id}");
     }
 
     /**
@@ -183,21 +187,22 @@ class CategoryService
      */
     protected function parseImage(ProductInterface $model, Product $product)
     {
-        \Log::channel('import_1c')->debug("Exchange 1C PARSEIMAGES IN: product ид={$product->id}, id={$model->id}");
+        \Log::channel('import_1c')->debug("parse IMAGES IN: product ид={$product->id}, id={$model->id}");
         $images = $product->getImages();
         foreach ($images as $image) {
 //            $path = $this->config->getFullPath(basename($image->path));
+            \Log::channel('import_1c')->debug("Image: {$image->path}");
             $path = $this->config->getFullPath($image->path);
-            \Log::channel('import_1c')->debug("Image full path={$path}");
+            \Log::channel('import_1c')->debug("Image full path: {$path}");
             if (file_exists($path)) {
-                \Log::channel('import_1c')->debug("Image file exists");
+                \Log::channel('import_1c')->debug('Image file exists');
                 $model->addImage1c($path, $image->caption);
             }
             else {
-                \Log::channel('import_1c')->debug("Image NOT EXIST");
+                \Log::channel('import_1c')->debug('Image file NOT EXIST');
             }
         }
-        \Log::channel('import_1c')->debug("Exchange 1C PARSEIMAGES OUT: product ид={$product->id}, id={$model->id}");
+        \Log::channel('import_1c')->debug("parse IMAGES OUT: product ид={$product->id}, id={$model->id}");
     }
 
     protected function beforeProductsSync(): void
