@@ -64,7 +64,7 @@ class OrderService
     public function query(): string
     {
         $ordersFile = $this->config->getFullPath('orders.xml');
-        $currentDateTime = Carbon::now();
+        $currentDateTime = Carbon::now('Europe/Volgograd');
         $commerceMLData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
                            <КоммерческаяИнформация ВерсияСхемы=\"2.05\" ДатаФормирования=\"{$currentDateTime}\">
                            </КоммерческаяИнформация>";
@@ -104,8 +104,8 @@ class OrderService
             $docElem = $ordersCommerceML->addChild('Документ');
             $docElem->addChild('Ид', "wc1c#order#{$order->ones_id}");
             $docElem->addChild('Номер', $order->ones_id);
-            $docElem->addChild('Дата', $order->created_at->format('Y-m-d'));
-            $docElem->addChild('Время', $order->created_at->format('h:m:s'));
+            $docElem->addChild('Дата', $order->created_at->timezone('Europe/Volgograd')->format('Y-m-d'));
+            $docElem->addChild('Время', $order->created_at->timezone('Europe/Volgograd')->format('H:i:s'));
             $docElem->addChild('ХозОперация', 'Заказ товара');
             $docElem->addChild('Роль', 'Продавец');
             $docElem->addChild('Валюта', 'RUB');
@@ -327,7 +327,7 @@ class OrderService
                 $docRequisite = $docRequisites->addChild('ЗначениеРеквизита');
                 {
                     $docRequisite->addChild('Наименование', 'Дата изменения статуса');
-                    $docRequisite->addChild('Значение', $order->updated_at->format('Y-m-d h:m:s'));
+                    $docRequisite->addChild('Значение', $order->updated_at->timezone('Europe/Volgograd')->format('Y-m-d H:i:s'));
                 }
             }
             $order->save();
