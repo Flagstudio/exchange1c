@@ -110,7 +110,7 @@ class OrderService
             $docElem->addChild('Роль', 'Продавец');
             $docElem->addChild('Валюта', 'RUB');
             $docElem->addChild('Сумма', number_format($order->sum,2, '.', ''));
-            $docElem->addChild('Комментарий', $order->shippingAddress ? $order->shippingAddress->comment : '');
+            $docElem->addChild('Комментарий', $order->shippingAddress ? htmlspecialchars($order->shippingAddress->comment) : '');
 
             $counterparties = $docElem->addChild('Контрагенты');
             {
