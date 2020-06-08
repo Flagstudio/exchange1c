@@ -182,73 +182,15 @@ class OrderService
                         }
                     }
                 }
-                if ($order->shippingAddress) {
+                if ($order->user) {
                     $recipient = $counterparties->addChild('Контрагент');
                     {
-                        $recipient->addChild('Ид', "wc1c#user#{$order->shippingAddress->id}");
+                        $recipient->addChild('Ид', "wc1c#user#{$order->user->id}");
                         $recipient->addChild('Роль', 'Получатель');
-                        $recipient->addChild('Наименование', $order->shippingAddress->getTitle());
-                        $recipient->addChild('ПолноеНаименование', $order->shippingAddress->getFullTitle());
-                        $recipient->addChild('Фамилия', $order->shippingAddress->last_name);
-                        $recipient->addChild('Имя', $order->shippingAddress->first_name);
-                        $recipient->addChild('Отчество', $order->shippingAddress->patronymic);
-
-                        $recipientIdCard = $recipient->addChild('УдостоверениеЛичности');
-                        {
-                            $recipientIdCard->addChild('ВидДокумента', 'Паспорт');
-                            $recipientIdCard->addChild('Серия', $order->shippingAddress->id_series);
-                            $recipientIdCard->addChild('Номер', $order->shippingAddress->id_number);
-                        }
-
-                        $recipientContacts = $recipient->addChild('Контакты');
-                        {
-                            $recipientPhone = $recipientContacts->addChild('Контакт');
-                            {
-                                $recipientPhone->addChild('Тип', 'Телефон');
-                                $recipientPhone->addChild('Значение', $order->shippingAddress->phone);
-                            }
-                        }
-
-                        $recipientAddress = $recipient->addChild('АдресРегистрации');
-                        {
-                            $recipientAddress->addChild('Представление', $order->shippingAddress->addressRepresentation());
-                            $recipientPostcode = $recipientAddress->addChild('АдресноеПоле');
-                            {
-                                $recipientPostcode->addChild('Тип', 'Почтовый индекс');
-                                $recipientPostcode->addChild('Значение', $order->shippingAddress->postcode);
-                            }
-                            $recipientCountry = $recipientAddress->addChild('АдресноеПоле');
-                            {
-                                $recipientCountry->addChild('Тип', 'Страна');
-                                $recipientCountry->addChild('Значение', $order->shippingAddress->country);
-                            }
-                            $recipientRegion = $recipientAddress->addChild('АдресноеПоле');
-                            {
-                                $recipientRegion->addChild('Тип', 'Регион');
-                                $recipientRegion->addChild('Значение', $order->shippingAddress->region);
-                            }
-                            $recipientCity = $recipientAddress->addChild('АдресноеПоле');
-                            {
-                                $recipientCity->addChild('Тип', 'Город');
-                                $recipientCity->addChild('Значение', $order->shippingAddress->city);
-                            }
-                            $recipientStreet = $recipientAddress->addChild('АдресноеПоле');
-                            {
-                                $recipientStreet->addChild('Тип', 'Улица');
-                                $recipientStreet->addChild('Значение', $order->shippingAddress->street);
-                            }
-                            $recipientHouseNumber = $recipientAddress->addChild('АдресноеПоле');
-                            {
-                                $recipientHouseNumber->addChild('Тип', 'Дом');
-                                $recipientHouseNumber->addChild('Значение', $order->shippingAddress->house_number);
-                            }
-                            $recipientRoom = $recipientAddress->addChild('АдресноеПоле');
-                            {
-                                $recipientRoom->addChild('Тип', 'Квартира');
-                                $recipientRoom->addChild('Значение', $order->shippingAddress->room);
-                            }
-                            $recipientAddress->addChild('Комментарий', $order->shippingAddress->tc_terminal);
-                        }
+                        $recipient->addChild('Наименование', $order->user->getTitle());
+                        $recipient->addChild('Фамилия', $order->user->last_name);
+                        $recipient->addChild('Имя', $order->user->first_name);
+                        $recipient->addChild('Отчество', $order->user->patronymic);
                     }
                 }
             }
