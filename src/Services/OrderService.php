@@ -104,8 +104,8 @@ class OrderService
             $docElem = $ordersCommerceML->addChild('Документ');
             $docElem->addChild('Ид', "wc1c#order#{$order->ones_id}");
             $docElem->addChild('Номер', $order->ones_id);
-            $docElem->addChild('Дата', $order->created_at->timezone('Europe/Volgograd')->format('Y-m-d'));
-            $docElem->addChild('Время', $order->created_at->timezone('Europe/Volgograd')->format('H:i:s'));
+            $docElem->addChild('Дата', optional(optional($order->created_at)->timezone('Europe/Volgograd'))->format('Y-m-d'));
+            $docElem->addChild('Время', optional(optional($order->created_at)->timezone('Europe/Volgograd'))->format('H:i:s'));
             $docElem->addChild('ХозОперация', 'Заказ товара');
             $docElem->addChild('Роль', 'Продавец');
             $docElem->addChild('Валюта', 'RUB');
@@ -227,7 +227,7 @@ class OrderService
                 $docRequisite = $docRequisites->addChild('ЗначениеРеквизита');
                 {
                     $docRequisite->addChild('Наименование', 'Тип заказа');
-                    $orderType = ($order->type == 'Дозаказ') ? ("{$order->type} к заказу №{$order->mainorder->ones_id} от {$order->mainorder->created_at->format('d.m.Y')} на " . number_format($order->mainorder->sum, 2, '.', '') . " руб.") : $order->type;
+                    $orderType = ($order->type == 'Дозаказ') ? ("{$order->type} к заказу №{$order->mainorder->ones_id} от {optional($order->mainorder->created_at)->format('d.m.Y')} на " . number_format($order->mainorder->sum, 2, '.', '') . " руб.") : $order->type;
                     $docRequisite->addChild('Значение', $orderType);
                 }
                 $docRequisite = $docRequisites->addChild('ЗначениеРеквизита');
