@@ -143,41 +143,41 @@ class OrderService
 
                         $payerAddress = $payer->addChild('АдресРегистрации');
                         {
-                            $payerAddress->addChild('Представление', $order->billingAddress->addressRepresentation());
+                            $payerAddress->addChild('Представление', $order->user->billingAddress->addressRepresentation());
                             $payerPostcode = $payerAddress->addChild('АдресноеПоле');
                             {
                                 $payerPostcode->addChild('Тип', 'Почтовый индекс');
-                                $payerPostcode->addChild('Значение', $order->billingAddress->postcode);
+                                $payerPostcode->addChild('Значение', $order->user->billingAddress->postcode);
                             }
                             $payerCountry = $payerAddress->addChild('АдресноеПоле');
                             {
                                 $payerCountry->addChild('Тип', 'Страна');
-                                $payerCountry->addChild('Значение', $order->billingAddress->country);
+                                $payerCountry->addChild('Значение', $order->user->billingAddress->country);
                             }
                             $payerRegion = $payerAddress->addChild('АдресноеПоле');
                             {
                                 $payerRegion->addChild('Тип', 'Регион');
-                                $payerRegion->addChild('Значение', $order->billingAddress->region);
+                                $payerRegion->addChild('Значение', $order->user->billingAddress->region);
                             }
                             $payerCity = $payerAddress->addChild('АдресноеПоле');
                             {
                                 $payerCity->addChild('Тип', 'Город');
-                                $payerCity->addChild('Значение', $order->billingAddress->city);
+                                $payerCity->addChild('Значение', $order->user->billingAddress->city);
                             }
                             $payerStreet = $payerAddress->addChild('АдресноеПоле');
                             {
                                 $payerStreet->addChild('Тип', 'Улица');
-                                $payerStreet->addChild('Значение', $order->billingAddress->street);
+                                $payerStreet->addChild('Значение', $order->user->billingAddress->street);
                             }
                             $payerHouseNumber = $payerAddress->addChild('АдресноеПоле');
                             {
                                 $payerHouseNumber->addChild('Тип', 'Дом');
-                                $payerHouseNumber->addChild('Значение', $order->billingAddress->house_number);
+                                $payerHouseNumber->addChild('Значение', $order->user->billingAddress->house_number);
                             }
                             $payerRoom = $payerAddress->addChild('АдресноеПоле');
                             {
                                 $payerRoom->addChild('Тип', 'Квартира');
-                                $payerRoom->addChild('Значение', $order->billingAddress->room);
+                                $payerRoom->addChild('Значение', $order->user->billingAddress->room);
                             }
                         }
                     }
@@ -325,7 +325,7 @@ class OrderService
         else {
             throw new Exchange1CException("Order class model is not implemented");
         }
-        
+
 
 
     }
