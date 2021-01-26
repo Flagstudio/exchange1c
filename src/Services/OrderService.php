@@ -64,7 +64,7 @@ class OrderService
     public function query(): string
     {
         $ordersFile = $this->config->getFullPath('orders.xml');
-        $currentDateTime = Carbon::now('Europe/Volgograd');
+        $currentDateTime = Carbon::now();
         $commerceMLData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
                            <КоммерческаяИнформация ВерсияСхемы=\"2.05\" ДатаФормирования=\"{$currentDateTime}\">
                            </КоммерческаяИнформация>";
